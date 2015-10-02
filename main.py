@@ -43,6 +43,10 @@ if __name__ == '__main__':
 
 	m = model.Model([300,300],[100,50], dropout=0.5)
 
-	multi_training.trainPiece(m, pcs, 10000)
+	m.learned_config = pickle.load( open( "output/final_learned_config.p", "rb" ) )
 
-	pickle.dump( m.learned_config, open( "output/final_learned_config.p", "wb" ) )
+	gen_adaptive(m,pcs,10,name="composition")
+
+	# multi_training.trainPiece(m, pcs, 10000)
+
+	# pickle.dump( m.learned_config, open( "output/final_learned_config.p", "wb" ) )
