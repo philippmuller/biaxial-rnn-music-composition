@@ -30,10 +30,10 @@ if __name__ == '__main__':
 
 	pcs = multi_training.loadPieces("music")
 	print "--> loaded pieces"
-	m = model.Model([3,3],[10,5], dropout=0.3)
+	m = model.Model([7,7],[10,5], dropout=0.5)
 	# [300,300],[100,50]
 	print "--> created model"
-	multi_training.trainPiece(m, pcs, 10)
+	multi_training.trainPiece(m, pcs, 100)
 	# 10000
 	print "--> training finished"
 
