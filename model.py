@@ -134,6 +134,9 @@ class Model(object):
 
         self.epsilon = np.spacing(np.float32(1.0))
 
+        print "model-setup-train::Trace-1"
+
+
         def step_time(in_data, *other):
             other = list(other)
             split = -len(self.t_layer_sizes) if self.dropout else len(other)
@@ -153,6 +156,9 @@ class Model(object):
         # We generate an output for each input, so it doesn't make sense to use the last output as an input.
         # Note that we assume the sentinel start value is already present
         # TEMP CHANGE: NO SENTINEL
+
+        print "model-setup-train::Trace-2"
+
         input_slice = self.input_mat[:,0:-1]
         n_batch, n_time, n_note, n_ipn = input_slice.shape
 
@@ -166,8 +172,13 @@ class Model(object):
         else:
             time_masks = []
 
+        print "model-setup-train::Trace-3"
+
         time_outputs_info = [initial_state_with_taps(layer, num_time_parallel) for layer in self.time_model.layers]
         time_result, _ = theano.scan(fn=step_time, sequences=[time_inputs], non_sequences=time_masks, outputs_info=time_outputs_info)
+
+        print "model-setup-train::Trace-4"
+
 
         self.time_thoughts = time_result
 
@@ -185,6 +196,9 @@ class Model(object):
         correct_choices = self.output_mat[:,1:,0:-1,:].transpose((2,0,1,3)).reshape((n_note-1,n_batch*n_time,2))
         note_choices_inputs = T.concatenate([start_note_values, correct_choices], axis=0)
 
+        print "model-setup-train::Trace-5"
+
+
         # Together, this and the output from the last LSTM goes to the new LSTM, but rotated, so that the batches in
         # one direction are the steps in the other, and vice versa.
         note_inputs = T.concatenate( [time_final, note_choices_inputs], axis=2 )
@@ -196,6 +210,9 @@ class Model(object):
         else:
             pitch_masks = []
 
+        print "model-setup-train::Trace-6"
+
+
         note_outputs_info = [initial_state_with_taps(layer, num_timebatch) for layer in self.pitch_model.layers]
         note_result, _ = theano.scan(fn=step_note, sequences=[note_inputs], non_sequences=pitch_masks, outputs_info=note_outputs_info)
 
@@ -205,6 +222,9 @@ class Model(object):
         # the hidden state of the last layer.
         # Transpose to be (batch, time, note, onOrArticProb)
         note_final = get_last_layer(note_result).reshape((n_note,n_batch,n_time,2)).transpose(1,2,0,3)
+
+        print "model-setup-train::Trace-7"
+
 
         # The cost of the entire procedure is the negative log likelihood of the events all happening.
         # For the purposes of training, if the ouputted probability is P, then the likelihood of seeing a 1 is P, and
@@ -220,19 +240,30 @@ class Model(object):
         mask = T.concatenate([T.ones_like(active_notes),active_notes], axis=3)
 
         loglikelihoods = mask * T.log( 2*note_final*self.output_mat[:,1:] - note_final - self.output_mat[:,1:] + 1 + self.epsilon )
+
+        print "model-setup-train::Trace-8"
+
         self.cost = T.neg(T.sum(loglikelihoods))
 
+        print "model-setup-train::Trace-9"
+
         updates, _, _, _, _ = create_optimization_updates(self.cost, self.params, method="adadelta")
+
+        print "model-setup-train::Trace-10"
+
         self.update_fun = theano.function(
             inputs=[self.input_mat, self.output_mat],
             outputs=self.cost,
             updates=updates,
             allow_input_downcast=True)
 
+
         self.update_thought_fun = theano.function(
             inputs=[self.input_mat, self.output_mat],
             outputs= ensure_list(self.time_thoughts) + ensure_list(self.note_thoughts) + [self.cost],
             allow_input_downcast=True)
+
+
 
     def _predict_step_note(self, in_data_from_time, *states):
         # States is [ *hiddens, last_note_choice ]
