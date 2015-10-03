@@ -40,18 +40,8 @@ def getPieceBatch(pieces):
     i,o = zip(*[getPieceSegment(pieces) for _ in range(batch_width)])
     return numpy.array(i), numpy.array(o)
 
-# to elaborate/check
-# 1. is signal handler really needed?
-# 2. is stopflag really needed?
-# 3. how does state_matrix get computed?
 def trainPiece(model,pieces,epochs,start=0):
-    stopflag = [False]
-    def signal_handler(signame, sf):
-        stopflag[0] = True
-    old_handler = signal.signal(signal.SIGINT, signal_handler)
     for i in range(start,start+epochs):
-        if stopflag[0]:
-            break
         error = model.update_fun(*getPieceBatch(pieces))
         if i % 100 == 0:
             print "epoch {}, error={}".format(i,error)
@@ -61,5 +51,3 @@ def trainPiece(model,pieces,epochs,start=0):
 
             noteStateMatrixToMidi(state_matrix, 'output/sample{}'.format(i))
             pickle.dump(model.learned_config,open('output/params{}.p'.format(i), 'wb'))
-
-    signal.signal(signal.SIGINT, old_handler)
