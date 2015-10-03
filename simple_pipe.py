@@ -14,6 +14,6 @@ xIpt, xOpt = map(lambda x: numpy.array(x, dtype='int8'), multi_training.getPiece
 # print xIpt
 all_outputs = [xOpt[0]]
 all_inputs = [xIpt[0]]
-print pcs
+# print pcs
 
 noteStateMatrixToMidi(numpy.array(pcs['short']),'output/'+name)

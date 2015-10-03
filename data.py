@@ -5,11 +5,11 @@ def startSentinel():
     def noteSentinel(note):
         position = note
         part_position = [position]
-        
+
         pitchclass = (note + lowerBound) % 12
         part_pitchclass = [int(i == pitchclass) for i in range(12)]
-        
-        return part_position + part_pitchclass + [0]*66 + [1] 
+
+        return part_position + part_pitchclass + [0]*66 + [1]
     return [noteSentinel(note) for note in range(upperBound-lowerBound)]
 
 def getOrDefault(l, i, d):
@@ -25,7 +25,7 @@ def buildContext(state):
             pitchclass = (note + lowerBound) % 12
             context[pitchclass] += 1
     return context
-    
+
 def buildBeat(time):
     return [2*x-1 for x in [time%2, (time//2)%2, (time//4)%2, (time//8)%2]]
 
@@ -49,6 +49,6 @@ def noteStateSingleToInputForm(state,time):
 
 def noteStateMatrixToInputForm(statematrix):
     # NOTE: May have to transpose this or transform it in some way to make Theano like it
-    #[startSentinel()] + 
+    #[startSentinel()] +
     inputform = [ noteStateSingleToInputForm(state,time) for time,state in enumerate(statematrix) ]
     return inputform

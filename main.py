@@ -8,7 +8,6 @@ import model
 
 def gen_adaptive(m,pcs,times,keep_thoughts=False,name="final"):
 	xIpt, xOpt = map(lambda x: numpy.array(x, dtype='int8'), multi_training.getPieceSegment(pcs))
-		print "get piece segment"
 	all_outputs = [xOpt[0]]
 	if keep_thoughts:
 		all_thoughts = []
@@ -44,10 +43,10 @@ if __name__ == '__main__':
 
 	m = model.Model([300,300],[100,50], dropout=0.3)
 
-	m.learned_config = pickle.load( open( "output/final_learned_config_borrowed.p", "rb" ) )
+	# m.learned_config = pickle.load( open( "output/final_learned_config_borrowed.p", "rb" ) )
 
-	gen_adaptive(m,pcs,2,name="composition")
+	# gen_adaptive(m,pcs,2,name="composition")
 
-	# multi_training.trainPiece(m, pcs, 10000)
+	multi_training.trainPiece(m, pcs, 10000)
 
-	# pickle.dump( m.learned_config, open( "output/final_learned_config.p", "wb" ) )
+	pickle.dump( m.learned_config, open( "output/final_learned_config.p", "wb" ) )
