@@ -1,3 +1,3 @@
-import * from theano
+from theano import *
 
 print("hello hackzurich")
