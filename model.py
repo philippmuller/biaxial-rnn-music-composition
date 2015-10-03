@@ -96,9 +96,13 @@ class Model(object):
         self.conservativity = T.fscalar()
         self.srng = T.shared_randomstreams.RandomStreams(np.random.randint(0, 1024))
 
+        print "model-setup::Trace-1"
         self.setup_train()
+        print "model-setup::Trace-2"
         self.setup_predict()
+        print "model-setup::Trace-3"
         self.setup_slow_walk()
+
 
     @property
     def params(self):

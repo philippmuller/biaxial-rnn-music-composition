@@ -13,8 +13,6 @@ def midiToNoteStateMatrix(midifile):
     statematrix = []
     time = 0
 
-    print pattern.resolution
-
     state = [[0,0] for x in range(key_span)]
     statematrix.append(state)
 

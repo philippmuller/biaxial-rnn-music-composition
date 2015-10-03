@@ -41,6 +41,7 @@ def getPieceBatch(pieces):
 
 def trainPiece(model,pieces,epochs,start=0):
     for i in range(start,start+epochs):
+        print "iteration {}, error={}".format(i,error)
         error = model.update_fun(*getPieceBatch(pieces))
         if i % 100 == 0:
             print "epoch {}, error={}".format(i,error)

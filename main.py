@@ -29,9 +29,12 @@ def gen_adaptive(m,pcs,times,name="final"):
 if __name__ == '__main__':
 
 	pcs = multi_training.loadPieces("music")
-
-	m = model.Model([300,300],[100,50], dropout=0.3)
-
-	multi_training.trainPiece(m, pcs, 10000)
+	print "--> loaded pieces"
+	m = model.Model([3,3],[10,5], dropout=0.3)
+	# [300,300],[100,50]
+	print "--> created model"
+	multi_training.trainPiece(m, pcs, 10)
+	# 10000
+	print "--> training finished"
 
 	pickle.dump( m.learned_config, open( "output/final_learned_config.p", "wb" ) )
