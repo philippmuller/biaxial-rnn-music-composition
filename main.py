@@ -22,9 +22,10 @@ def gen_adaptive(m,pcs,times,keep_thoughts=False,name="final"):
 			cons -= 0.02
 		else:
 			cons += (1 - cons)*0.3
+
 		all_outputs.append(resdata[-1])
 
-	writenoteStateMatrixToMidiToFile(numpy.array(all_outputs),'output/'+name)
+	noteStateMatrixToMidi(numpy.array(all_outputs),'output/'+name)
 
 
 if __name__ == '__main__':

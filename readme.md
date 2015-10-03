@@ -1,14 +1,8 @@
-# Biaxial Recurrent Neural Network for Music Composition
-
-This code implements a recurrent neural network trained to generate classical music. The model, which uses LSTM layers and draws inspiration from convolutional neural networks, learns to predict which notes will be played at each time step of a musical piece.
-
-You can read about its design and hear examples on [this blog post](http://www.hexahedria.com/2015/08/03/composing-music-with-recurrent-neural-networks/). 
-
 ## Requirements
 
 This code is written in Python, and depends on having Theano and theano-lstm (which can be installed with pip) installed. The bare minimum you should need to do to get everything running, assuming you have Python, is
 ```
-sudo pip install --upgrade --no-deps git+git://github.com/Theano/Theano.git 
+sudo pip install --upgrade --no-deps git+git://github.com/Theano/Theano.git
 sudo pip install numpy scipy theano-lstm python-midi
 ```
 
@@ -42,7 +36,3 @@ Finally, you can generate a full composition after training is complete. The fun
 ```python
 gen_adaptive(m,pcs,10,name="composition")
 ```
-
-There are also mechanisms to observe the hidden activations and memory cells of the network, but these are still a work in progress at the moment.
-
-Right now, there is no separate validation step, because my initial goal was to produce interesting music, not to assess the accuracy of this method. It does, however, print out the cost on the training set after every 100 iterations during training.
