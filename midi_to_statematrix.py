@@ -3,6 +3,8 @@ import midi, numpy
 lowerBound = 24
 upperBound = 102
 span = upperBound-lowerBound
+tickscale = 55
+
 
 def midiToNoteStateMatrix(midifile):
     pattern = midi.read_midifile(midifile)
@@ -65,7 +67,6 @@ def noteStateMatrixToMidi(statematrix, name="example"):
     pattern.append(track)
 
     span = upperBound-lowerBound
-    tickscale = 55
 
     lastcmdtime = 0
     prevstate = [[0,0] for x in range(span)]
