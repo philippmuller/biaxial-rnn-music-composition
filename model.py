@@ -1,6 +1,5 @@
 import theano, theano.tensor as T
 import numpy as np
-import theano_lstm
 
 from out_to_in_op import OutputFormToInputFormOp
 
@@ -159,7 +158,7 @@ class Model(object):
 
         # apply dropout
         if self.dropout > 0:
-            time_masks = theano_lstm.MultiDropout( [(num_time_parallel, shape) for shape in self.t_layer_sizes], self.dropout)
+            time_masks = MultiDropout( [(num_time_parallel, shape) for shape in self.t_layer_sizes], self.dropout)
         else:
             time_masks = []
 
@@ -189,7 +188,7 @@ class Model(object):
 
         # apply dropout
         if self.dropout > 0:
-            pitch_masks = theano_lstm.MultiDropout( [(num_timebatch, shape) for shape in self.p_layer_sizes], self.dropout)
+            pitch_masks = MultiDropout( [(num_timebatch, shape) for shape in self.p_layer_sizes], self.dropout)
         else:
             pitch_masks = []
 
