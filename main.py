@@ -42,9 +42,9 @@ if __name__ == '__main__':
 
 	pcs = multi_training.loadPieces("music")
 
-	m = model.Model([30,30],[10,5], dropout=0.3)
+	m = model.Model([300,300],[100,50], dropout=0.3)
 
-	m.learned_config = pickle.load( open( "output/final_learned_config.p", "rb" ) )
+	m.learned_config = pickle.load( open( "output/final_learned_config_borrowed.p", "rb" ) )
 
 	gen_adaptive(m,pcs,2,name="composition")
 
