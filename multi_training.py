@@ -16,14 +16,13 @@ def loadPieces(dirpath):
         if fname[-4:] not in ('.mid','.MID'):
             continue
 
-        name = fname[:-4]
-
         outMatrix = midiToNoteStateMatrix(os.path.join(dirpath, fname))
         if len(outMatrix) < batch_len:
             continue
 
+        name = fname[:-4]
         pieces[name] = outMatrix
-        print "Loaded {}".format(name)
+        print "Loaded midi file: {}".format(name)
 
     return pieces
 

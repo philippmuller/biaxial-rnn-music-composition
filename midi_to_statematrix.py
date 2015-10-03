@@ -2,7 +2,7 @@ import midi, numpy
 
 lowerBound = 24
 upperBound = 102
-span = upperBound-lowerBound
+key_span = upperBound-lowerBound
 tickscale = 55
 
 
@@ -13,14 +13,16 @@ def midiToNoteStateMatrix(midifile):
     statematrix = []
     time = 0
 
-    state = [[0,0] for x in range(span)]
+    print pattern.resolution
+
+    state = [[0,0] for x in range(key_span)]
     statematrix.append(state)
 
     while True:
         if time % (pattern.resolution / 4) == (pattern.resolution / 8):
             # Crossed a note boundary. Create a new state, defaulting to holding notes
             oldstate = state
-            state = [[oldstate[x][0],0] for x in range(span)]
+            state = [[oldstate[x][0],0] for x in range(key_span)]
             statematrix.append(state)
 
         for i in range(len(timeleft)):
@@ -41,7 +43,7 @@ def midiToNoteStateMatrix(midifile):
                 elif isinstance(evt, midi.TimeSignatureEvent):
                     if evt.numerator not in (2, 4):
                         # We don't want to worry about non-4 time signatures. Bail early!
-                        # print "Found time signature event {}. Bailing!".format(evt)
+                        print "Found time signature event {}. Bailing!".format(evt)
                         return statematrix
 
                 try:
@@ -66,14 +68,12 @@ def noteStateMatrixToMidi(statematrix, name="example"):
     track = midi.Track()
     pattern.append(track)
 
-    span = upperBound-lowerBound
-
     lastcmdtime = 0
-    prevstate = [[0,0] for x in range(span)]
+    prevstate = [[0,0] for x in range(key_span)]
     for time, state in enumerate(statematrix + [prevstate[:]]):
         offNotes = []
         onNotes = []
-        for i in range(span):
+        for i in range(key_span):
             n = state[i]
             p = prevstate[i]
             if p[0] == 1:
