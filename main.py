@@ -26,12 +26,22 @@ def gen_adaptive(m,pcs,times,name="final"):
 	noteStateMatrixToMidi(numpy.array(all_outputs),'output/'+name)
 
 
+def create_model():
+	 return model.Model([7,7],[10,5], dropout=0.5) # [300,300],[100,50]
+
+def create_pieces():
+	return multi_training.loadPieces("music")
+
+def web_endpoint():
+	pcs = multi_training.loadPieces("music")
+	m = create_model()
+	gen_adaptive(m, pcs, 1, name='live')
+
 if __name__ == '__main__':
 
-	pcs = multi_training.loadPieces("music")
+	pcs = multi_training.loadPieces("more_music")
 	print "--> loaded pieces"
-	m = model.Model([7,7],[10,5], dropout=0.5)
-	# [300,300],[100,50]
+	m = create_model()
 	print "--> created model"
 	multi_training.trainPiece(m, pcs, 100)
 	# 10000
