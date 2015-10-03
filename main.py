@@ -6,11 +6,9 @@ from midi_to_statematrix import *
 import multi_training
 import model
 
-def gen_adaptive(m,pcs,times,keep_thoughts=False,name="final"):
+def gen_adaptive(m,pcs,times,name="final"):
 	xIpt, xOpt = map(lambda x: numpy.array(x, dtype='int8'), multi_training.getPieceSegment(pcs))
 	all_outputs = [xOpt[0]]
-	if keep_thoughts:
-		all_thoughts = []
 	m.start_slow_walk(xIpt[0])
 	cons = 1
 	for time in range(multi_training.batch_len*times):

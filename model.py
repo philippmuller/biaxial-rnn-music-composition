@@ -298,6 +298,7 @@ class Model(object):
             output = get_last_layer(notes_result)
 
             next_input = OutputFormToInputFormOp()(output, time + 1) # TODO: Fix time
+            #next_input = T.cast(T.alloc(0, 3, 4),'int64')
 
             return (ensure_list(new_states) + [ next_input, time + 1, output ]), updates
 
