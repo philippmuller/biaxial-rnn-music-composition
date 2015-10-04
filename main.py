@@ -27,15 +27,18 @@ def gen_adaptive(m,pcs,times,name="final"):
 
 
 def create_model():
-	 return model.Model([40,40],[20,10], dropout=0.5) # [300,300],[100,50]
+	 return model.Model([5,5],[20,10], dropout=0.5) # [300,300],[100,50]
 
 def create_pieces():
 	return multi_training.loadPieces("music")
 
-def web_endpoint():
+def web_endpoint_create():
 	pcs = multi_training.loadPieces("music")
 	m = create_model()
-	gen_adaptive(m, pcs, 1, name='live')
+	return m,pcs
+
+def web_endpoint(m, pcs):
+	return gen_adaptive(m, pcs, 1, name='live')
 
 if __name__ == '__main__':
 
