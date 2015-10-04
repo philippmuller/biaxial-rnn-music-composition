@@ -43,7 +43,7 @@ def trainPiece(model,pieces,epochs,start=0):
     for i in range(start,start+epochs):
         print "iteration {}".format(i)
         error = model.update_fun(*getPieceBatch(pieces))
-        if i % 100 == 0:
+        if i % 2 == 0:
             print "epoch {}, error={}".format(i,error)
         if i % 500 == 0 or (i % 100 == 0 and i < 1000):
             x_input, x_output = map(numpy.array, getPieceSegment(pieces))
