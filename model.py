@@ -5,6 +5,8 @@ from out_to_in_op import OutputFormToInputFormOp
 
 from theano_lstm import Embedding, LSTM, RNN, StackedCells, Layer, create_optimization_updates, masked_loss, MultiDropout
 
+mode = theano.compile.Mode(optimizer="fast_compile", linker="py")
+
 def has_hidden(layer):
     """
     Whether a layer has a trainable
@@ -255,13 +257,15 @@ class Model(object):
             inputs=[self.input_mat, self.output_mat],
             outputs=self.cost,
             updates=updates,
-            allow_input_downcast=True)
+            allow_input_downcast=True,
+            mode=mode)
 
+        print "model-setup-train::Trace-11"
 
         self.update_thought_fun = theano.function(
             inputs=[self.input_mat, self.output_mat],
             outputs= ensure_list(self.time_thoughts) + ensure_list(self.note_thoughts) + [self.cost],
-            allow_input_downcast=True)
+            allow_input_downcast=True, mode=mode)
 
 
 
@@ -355,13 +359,15 @@ class Model(object):
             inputs=[self.steps_to_simulate, self.conservativity, self.predict_seed],
             outputs=self.predicted_output,
             updates=updates,
-            allow_input_downcast=True)
+            allow_input_downcast=True,
+            mode=mode)
 
         self.predict_thought_fun = theano.function(
             inputs=[self.steps_to_simulate, self.conservativity, self.predict_seed],
             outputs=ensure_list(self.predict_thoughts),
             updates=updates,
-            allow_input_downcast=True)
+            allow_input_downcast=True,
+            mode=mode)
 
     def setup_slow_walk(self):
 
@@ -406,7 +412,8 @@ class Model(object):
             inputs=[self.conservativity],
             outputs=slow_walk_results,
             updates=updates,
-            allow_input_downcast=True)
+            allow_input_downcast=True,
+            mode=mode)
 
     def start_slow_walk(self, seed):
         seed = np.array(seed)
