@@ -93,7 +93,7 @@ class Model(object):
 
         self.dropout = dropout
 
-        self.conservativity = T.fscalar()
+        self.conservativity = T.fscalar(0.7)
         self.srng = T.shared_randomstreams.RandomStreams(np.random.randint(0, 1024))
 
         print "model-setup::Trace-1"

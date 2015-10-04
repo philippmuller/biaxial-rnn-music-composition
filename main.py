@@ -27,7 +27,7 @@ def gen_adaptive(m,pcs,times,name="final"):
 
 
 def create_model():
-	 return model.Model([5,5],[20,10], dropout=0.5) # [300,300],[100,50]
+	 return model.Model([30,30],[20,10], dropout=0.8) # [300,300],[100,50]
 
 def create_pieces():
 	return multi_training.loadPieces("music")
