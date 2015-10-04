@@ -285,7 +285,7 @@ class Model(object):
 
         # Thus, probabilities is a vector of two probabilities, P(play), and P(artic | play)
 
-        shouldPlay = self.srng.uniform() < (probabilities[0] ** self.conservativity)
+        shouldPlay = self.srng.normal() < (probabilities[0] ** self.conservativity)
         shouldArtic = shouldPlay * (self.srng.uniform() < probabilities[1])
 
         chosen = T.stack(shouldPlay, shouldArtic)
