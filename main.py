@@ -2,13 +2,31 @@ import cPickle as pickle
 import gzip
 import numpy
 from midi_to_statematrix import *
-from daemon import runner
-
 import multi_training
 import model
+import daemon
+import lockfile
 
+# initialize daemon
+context = daemon.DaemonContext(
+  working_directory="/home/azureuser/hackzurich",
+  umask=0o002,
+  pidfile=lockfile.FileLock("/var/run/musicrnn.pid")
+  )
+
+mail_gid = grp.getgrnam("mail").gr_gid
+context.gid = mail_gid
+
+parameters = open("output/params0.p")
+sample0 = open("output/sample0.mid")
+out = open("output/final_learned_config.p")
+mid = open("output/final.mid")
+
+context.files_preserve = [parameters, sample0, out, mid]
+
+# generate
 def gen_adaptive(m,pcs,times,name="final"):
-  xIpt, xOpt = map(lambda x: numpy.array(x, dtype='int8'), multi_training.getPieceSegment(pcs))
+  xIpt, xOpt = map(lambda x: numpy.array(x, dtype="int8"), multi_training.getPieceSegment(pcs))
   all_outputs = [xOpt[0]]
   m.start_slow_walk(xIpt[0])
   cons = 1
@@ -24,11 +42,11 @@ def gen_adaptive(m,pcs,times,name="final"):
 
     all_outputs.append(resdata[-1])
 
-  noteStateMatrixToMidi(numpy.array(all_outputs),'output/'+name)
+  noteStateMatrixToMidi(numpy.array(all_outputs),"/home/azureuser/hackzurich/output/"+name)
 
 
 def create_model():
-   return model.Model([30,30],[20,10], dropout=0.8) # [300,300],[100,50]
+   return model.Model([300,300],[100,50], dropout=0.5) # [300,300],[100,50]
 
 def create_pieces():
   return multi_training.loadPieces("music")
@@ -39,34 +57,27 @@ def web_endpoint_create():
   return m,pcs
 
 def web_endpoint(m, pcs):
-  return gen_adaptive(m, pcs, 1, name='live')
-
-class App():
-  def __init__(self):
-    self.stdin_path = '/dev/null'
-    self.stdout_path = '/dev/tty'
-    self.stderr_path = '/dev/tty'
-    self.pidfile_path =  '/tmp/foo.pid'
-    self.pidfile_timeout = 5
-
-  def run(self):
-    pcs = multi_training.loadPieces("more_music")
-    print "--> loaded pieces"
-    m = create_model()
-    print "--> created model"
-    multi_training.trainPiece(m, pcs, 100)
-    # 10000
-    print "--> training finished"
-
-    pickle.dump( m.learned_config, open( "output/final_learned_config.p", "wb" ) )
-    gen_adaptive(m, pcs, 2, name='trained')
-
-app = App()
-daemon_runner = runner.DaemonRunner(app)
-daemon_runner.do_action()
+  return gen_adaptive(m, pcs, 1, name="live")
 
 
-# if __name__ == '__main__':
+
+
+#learn
+with context:
+  pcs = multi_training.loadPieces("more_music")
+  print "--> loaded pieces"
+  m = create_model()
+  print "--> created model"
+  multi_training.trainPiece(m, pcs, 1000)
+  # 10000
+  print "--> training finished"
+
+  pickle.dump( m.learned_config, out )
+  gen_adaptive(m, pcs, 2, name="trained")
+
+
+
+# if __name__ == "__main__":
 
 #   pcs = multi_training.loadPieces("more_music")
 #   print "--> loaded pieces"
@@ -77,4 +88,4 @@ daemon_runner.do_action()
 #   print "--> training finished"
 
 #   pickle.dump( m.learned_config, open( "output/final_learned_config.p", "wb" ) )
-#   gen_adaptive(m, pcs, 2, name='trained')
+#   gen_adaptive(m, pcs, 2, name="trained")
